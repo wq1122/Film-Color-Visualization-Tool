@@ -1,0 +1,15 @@
+@import './base.css';
+
+#app {
+  width: 100%;
+  box-sizing: border-box;
+  font-weight: normal;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+a{
+    text-decoration: none;
+}
