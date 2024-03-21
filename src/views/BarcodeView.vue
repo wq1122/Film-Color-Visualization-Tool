@@ -7,42 +7,39 @@
   <ul class="list" ref="listDom" :style="flag ? 'cursor:pointer': 'cursor:auto'">
     <li v-for="(item, index) in dataStore.barCodeList" @dblclick="showInfo(item, index)" :key="index" class="li" :style="{background: 'rgb(' + item+ ')'}"></li>
   </ul>
-  <div class="content" :style="isShow ? 'box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);' : ''">
-    <el-row>
-      <el-col :span="6" style="display: flex; align-items: center;justify-content: center;">
-        <div class="square" v-show="isShow" :style="{background: info.rgb}"></div>
-        <el-text v-show="isShow" class="mx-1" type="danger"><h3>R:</h3>{{info.R}}</el-text>
-        <el-text v-show="isShow" class="mx-1" type="success"><h3>G:</h3>{{info.G}}</el-text>
-        <el-text v-show="isShow" class="mx-1" type="primary"><h3>B:</h3>{{info.B}}</el-text>
-      </el-col>
-      <el-col :span="9">
-        <div id="myEcharts" ref="myEcharts"></div>
-      </el-col>
-      <el-col :span="9" v-show="isShow">
-        <el-table :data="tableData" border style="width: 100%">
-          <el-table-column prop="color" label="color">
-            <template #default="{row}">
-              <div :style="{background: row.color , width: '20px', height: '20px', border: '1px solid black'}"></div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="percentage" label="percentage" />
-          <el-table-column prop="colorName" label="colorName" />
-        </el-table>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="12">
-        <div id="myEcharts1" ref="myEcharts1"></div>
-      </el-col>
-      <el-col :span="12">
-        <div class="imgs" v-show="isShow">
-          <el-image
-              style="height: 100%"
-              :src="'data:image/png;base64,'+info.url"
-              fit="cover"></el-image>
-        </div>
-      </el-col>
-    </el-row>
+  <div class="content">
+    <div class="mask" :style="isShow ? 'z-index:-1' : 'z-index: 1'"></div>
+    <el-card style="min-width: calc((100% - 200px) / 3);" v-show="isShow" >
+      <div class="square" :style="{background: info.rgb}"></div>
+      <el-text class="mx-1" type="danger"><h3>R:</h3>{{info.R}}</el-text>
+      <el-text class="mx-1" type="success"><h3>G:</h3>{{info.G}}</el-text>
+      <el-text class="mx-1" type="primary"><h3>B:</h3>{{info.B}}</el-text>
+    </el-card>
+    <el-card style="min-width: calc((100% - 200px) / 3);" >
+      <div id="myEcharts" ref="myEcharts"></div>
+    </el-card>
+    <el-card style="min-width: calc((100% - 200px) / 3);" v-show="isShow">
+      <el-table :data="tableData" border style="width: 100%" :row-style="{height: '20px'}">
+        <el-table-column prop="color" label="color" width="100">
+          <template #default="{row}">
+            <div :style="{background: row.color , width: '18px', height: '18px', border: '1px solid black'}"></div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="percentage" label="percentage"/>
+        <el-table-column prop="colorName" label="colorName"/>
+      </el-table>
+    </el-card>
+    <el-card style="min-width: calc((100% - 200px) / 3); margin-left: 20px;">
+      <div id="myEcharts1" ref="myEcharts1"></div>
+    </el-card>
+    <el-card v-show="isShow" style="flex-grow: 1; margin-right: 20px; margin-left: 40px;">
+      <div class="imgs">
+        <el-image
+            style="height: 100%"
+            :src="'data:image/png;base64,'+info.url"
+            fit="cover"></el-image>
+      </div>
+    </el-card>
   </div>
 
   <el-image-viewer
@@ -102,8 +99,8 @@ const mousedown=(event:any)=>{
 const mousemove=(event:any)=>{
   // console.log("mousemove")
   if (flag.value) { // 判断是否是鼠标按下滚动元素区域
-    var moveX = event.clientX; // 获取移动的x轴
-    var scrollX = moveX - downX.value; // 当前移动的x轴下标减去刚点击下去的x轴下标得到鼠标滑动距离
+    let moveX = event.clientX; // 获取移动的x轴
+    let scrollX = moveX - downX.value; // 当前移动的x轴下标减去刚点击下去的x轴下标得到鼠标滑动距离
     listDom.value.scrollLeft = scrollLeft.value - scrollX // 鼠标按下的滚动条偏移量减去当前鼠标的滑动距离
     // console.log(scrollX)
   }
@@ -125,7 +122,16 @@ const mouseleave=()=>{
 .el-col{
   display: flex;
   align-items: center;
+  justify-content: space-around;
+}
+.el-card{
+  height: 520px;
+  box-sizing: border-box;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  margin-bottom: 20px;
 }
 .list {
   max-width: 1280px;
@@ -150,11 +156,21 @@ const mouseleave=()=>{
 }
 
 .content{
-  width: 90%;
+  width: 100%;
   min-width: 1000px;
-  padding: 20px;
   margin: 20px auto;
   box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  position: relative;
+  .mask{
+    width: 100%;
+    height: 700px;
+    position: absolute;
+    background: white;
+    top: -20px;
+  }
   .square{
     width: 40px;
     height: 40px;
@@ -172,8 +188,8 @@ const mouseleave=()=>{
   .imgs{
     display: flex;
     justify-content: center;
-    margin: 40px auto;
-    height: 220px;
+    width: 100%;
+    height: 100%;
   }
 
 }

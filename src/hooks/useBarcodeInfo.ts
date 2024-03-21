@@ -24,10 +24,6 @@ export default function (){
                 trigger: 'item',
                 formatter: '{b}: ({d}%)'
             },
-            legend: {
-                top: "20px",
-                left: 'center'
-            },
             color:['black', 'brown', 'grey', 'red', 'orange', 'blue', 'cyan', 'magenta', 'white', 'yellow', 'green'],
             series: [
                 {
