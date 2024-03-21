@@ -1,4 +1,4 @@
-# moviesAnalyse
+# Film-Color-Visualization-Tool
 
 ## Project Setup
 
