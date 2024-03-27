@@ -3,6 +3,7 @@
     <el-button type="primary" @click="outputJson">Output Json</el-button>
     <el-button type="success" @click="outputCsv">Output CSV</el-button>
     <el-button type="warning" @click="HueHistogram">HueHistogram</el-button>
+    <el-button type="danger" @click="exportImg">export BarCode</el-button>
   </div>
   <ul class="list" ref="listDom" :style="flag ? 'cursor:pointer': 'cursor:auto'">
     <li v-for="(item, index) in dataStore.barCodeList" @dblclick="showInfo(item, index)" :key="index" class="li" :style="{background: 'rgb(' + item+ ')'}"></li>
@@ -20,7 +21,7 @@
     </el-card>
     <el-card style="min-width: calc((100% - 200px) / 3);" v-show="isShow">
       <el-table :data="tableData" border style="width: 100%" :row-style="{height: '20px'}">
-        <el-table-column prop="color" label="color" width="100">
+        <el-table-column prop="color" label="color" width="60">
           <template #default="{row}">
             <div :style="{background: row.color , width: '18px', height: '18px', border: '1px solid black'}"></div>
           </template>
@@ -60,6 +61,8 @@ import {onMounted, ref} from "vue";
 let { imgPreviewList, showImagePreview, closePreview, HueHistogram, outputJson, outputCsv } = useHueHistogram()
 let { myEcharts, myEcharts1, info, showInfo, isShow, tableData } = useBarcodeInfo()
 const dataStore = useDataStore()
+import html2canvas from 'html2canvas';
+
 
 
 const listDom = ref()
@@ -67,6 +70,26 @@ const listDom = ref()
 const flag = ref(false)
 const downX = ref()
 const scrollLeft = ref()
+
+const exportImg = () =>{
+  const dom = listDom.value
+  exportToImage(dom)
+}
+/**
+ * @description 将dom对象导出为图片
+ * @param {Object} exportContent 要导出的内容
+ * @param {String} title 导出的图片名称
+ */
+const exportToImage = (exportContent:any)=> {
+  html2canvas(exportContent).then((canvas) => {
+    const imageDataUrl = canvas.toDataURL('image/png');
+    const downloadLink = document.createElement('a');
+    downloadLink.href = imageDataUrl;
+    downloadLink.download = 'test.png';
+    downloadLink.click();
+  });
+}
+
 
 onMounted(()=>{
   sessionStorage.setItem("index", "0")
@@ -138,16 +161,15 @@ const mouseleave=()=>{
   display: flex;
   height: 240px;
   flex-wrap: nowrap;
-  overflow-x: auto;
   justify-content: flex-start;
   align-items: center;
   padding: 0;
   margin: 0;
   list-style: none;
   .li {
+    flex: 1 1 auto;
     width: 20px;
     height: 200px;
-    flex-shrink: 0;
   }
   .li:hover{
     transition: 1s;

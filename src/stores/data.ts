@@ -20,17 +20,10 @@ export const useDataStore = defineStore('data', () => {
             tempList = res['barcode']
         }
 
-        let middleList:any = []
         for (let j = 0; j < tempList[0].length; j++) {
             for (let i = 0; i < tempList.length; i++) {
-                middleList.push(tempList[i][j])
+                barCodeList.value.push(tempList[i][j])
             }
-        }
-        let volume = 80
-        let min = index * volume
-        let max = Math.min((index + 1) * volume,middleList.length)
-        for(let i = min; i < max; i++){
-            barCodeList.value.push(middleList[i])
         }
     }
     const getData = async(form:object) => {

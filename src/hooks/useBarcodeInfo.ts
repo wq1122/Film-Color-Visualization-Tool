@@ -9,45 +9,48 @@ export default function (){
     let myEcharts1= ref()
     const tableData = reactive<any>([])
     const isShow = ref(false)
-    function initChart() {
+    function initChart(list:Array<number>, max:number) {
         if(!chart){
             chart = echarts.init(myEcharts.value,'light');
             chart1 = echarts.init(myEcharts1.value,'light');
         }
         // 把配置和数据放这里
-        chart.setOption({
+        chart.setOption( {
             title: {
                 text: 'dominant colors',
-                left: 'center'
+                left:'center'
             },
-            tooltip: {
-                trigger: 'item',
-                formatter: '{b}: ({d}%)'
+            toolbox: {
+                show: true,
+                feature: {
+                    saveAsImage: { show: true }
+                }
             },
-            color:['black', 'brown', 'grey', 'red', 'orange', 'blue', 'cyan', 'magenta', 'white', 'yellow', 'green'],
+            radar: {
+                // shape: 'circle',
+                indicator: [
+                    {'name': 'black',max:max},
+                    {'name': 'brown',max:max},
+                    {'name': 'grey',max:max},
+                    {'name': 'red',max:max},
+                    {'name': 'orange',max:max},
+                    {'name': 'blue',max:max},
+                    {'name': 'cyan',max:max},
+                    {'name': 'magenta',max:max},
+                    {'name': 'white',max:max},
+                    {'name': 'yellow',max:max},
+                    {'name': 'green',max:max}
+                ]
+            },
             series: [
                 {
-                    name: 'Access From',
-                    type: 'pie',
-                    radius: '40%',
-                    data: info.list,
-                    labelLine: {
-                        show: false
-                    },
-                    label: {
-                        show: false,
-                        position: 'center'
-                    },
-                },
-                {
-                    type: 'pie',
-                    clockWise: false,
-                    radius: ['40%','41%'],
-                    data: [10],
-                    labelLine: {
-                        show: false
-                    }
-                },
+                    type: 'radar',
+                    data: [
+                        {
+                            value: list
+                        }
+                    ]
+                }
             ]
         });
         chart1.setOption({
@@ -110,12 +113,18 @@ export default function (){
         info.url = res2
         info.list = res
         info.list1 = res3
-        initChart()
+        let list = []
+        let max = 0
         tableData.splice(0,tableData.length)
         let sum:number = 0
         for(let i = 0; i < res.length; i++){
             sum += Number(res[i].value)
+            list.push(res[i].value)
+            if(res[i].value > max){
+                max = res[i].value
+            }
         }
+        initChart(list, max)
         for(let i = 0; i < res.length; i++){
             tableData.push({
                 color: res[i].name,
